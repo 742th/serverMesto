@@ -1,0 +1,14 @@
+@import url('./popup_img-op/popup_img-op.css');
+
+.popup_img {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none;
+    background-color: rgba(0, 0, 0, .5);
+    width: 100%;
+    height: 100%;
+  }
