@@ -7,8 +7,8 @@ const { routerCard } = require('./routes/cards.js');
 const { routerUsers } = require('./routes/users.js');
 
 app.use('/', express.static(path.join(__dirname, 'public')));
-app.use('/', routerCard);
-app.use('/', routerUsers);
+app.use('/cards', routerCard);
+app.use('/users', routerUsers);
 app.use('/', (req, res) => {
   res.status(404).json({ "message": "Запрашиваемый ресурс не найден" });
 });

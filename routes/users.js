@@ -3,7 +3,7 @@ const routerUsers = require('express').Router();
 const users = require('../data/user.json');
 
 
-routerUsers.get('/users', (req, res) => {
+routerUsers.get('/', (req, res) => {
   res.status(200).json(users);
 });
 
@@ -17,7 +17,7 @@ let answer = users.find((el) => el._id === req.params._id);
   // next();
 };
 
-routerUsers.get('/users/:_id', doesUserExist);
+routerUsers.get('/:_id', doesUserExist);
 
 module.exports = {
   routerUsers,
