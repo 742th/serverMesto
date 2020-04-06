@@ -12,7 +12,7 @@ const doesUserExist = (req, res, next) => {
 let answer = users.find((el) => el._id === req.params._id);
   if (answer) {
     res.json(answer);
-} res.status(404).send(`${req.params._id} не существует`);
+} res.status(404).json({ "message": "Нет пользователя с таким id" });
 
   // next();
 };
