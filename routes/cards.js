@@ -1,6 +1,8 @@
 const routerCard = require('express').Router();
+const path = require('path');
 
-const cards = require('../data/cards.json');
+// eslint-disable-next-line import/no-dynamic-require
+const cards = require(path.join(__dirname, '../data/cards.json'));
 
 routerCard.get('/', (req, res) => {
   res.json(cards);
