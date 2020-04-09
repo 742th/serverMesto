@@ -10,9 +10,9 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/cards', routerCard);
 app.use('/users', routerUsers);
 app.use('/', (req, res) => {
-  res.status(404).json({ "message": "Запрашиваемый ресурс не найден" });
+  res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
 });
 
 app.listen(PORT, () => {
-  console.log(`listen ${PORT}`);
+  // console.log(`listen ${PORT}`);
 });
