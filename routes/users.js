@@ -12,9 +12,9 @@ routerUsers.get('/', (req, res) => {
 const doesUserExist = (req, res, next) => {
   // eslint-disable-next-line no-underscore-dangle
   const answer = users.find((el) => el._id === req.params._id);
-  if (answer) {
-    res.json(answer);
-  } res.status(404).json({ message: 'Нет пользователя с таким id' });
+  if (!answer) {
+    res.status(404).json({ message: 'Нет пользователя с таким id' });
+  } res.json(answer);
 
   next();
 };
