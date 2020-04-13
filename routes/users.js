@@ -14,9 +14,10 @@ const doesUserExist = (req, res, next) => {
   const answer = users.find((el) => el._id === req.params._id);
   if (!answer) {
     res.status(404).json({ message: 'Нет пользователя с таким id' });
-  } res.json(answer);
-
-  next();
+  } else {
+    res.json(answer);
+    next();
+  }
 };
 
 routerUsers.get('/:_id', doesUserExist);
