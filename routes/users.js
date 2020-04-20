@@ -1,26 +1,10 @@
 const routerUsers = require('express').Router();
 const path = require('path');
+const { createUser, getAllUsers, getUser } = require(path.join(__dirname,'../controllers/users'));
 
-// eslint-disable-next-line import/no-dynamic-require
-const users = require(path.join(__dirname, '../data/user.json'));
-
-
-routerUsers.get('/', (req, res) => {
-  res.json(users);
-});
-
-const doesUserExist = (req, res, next) => {
-  // eslint-disable-next-line no-underscore-dangle
-  const answer = users.find((el) => el._id === req.params._id);
-  if (!answer) {
-    res.status(404).json({ message: 'Нет пользователя с таким id' });
-  } else {
-    res.json(answer);
-    next();
-  }
-};
-
-routerUsers.get('/:_id', doesUserExist);
+routerUsers.get('/', getAllUsers);
+routerUsers.get('/:_id', getUser);
+routerUsers.post('/', createUser);
 
 module.exports = {
   routerUsers,

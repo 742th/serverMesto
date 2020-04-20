@@ -1,12 +1,10 @@
 const routerCard = require('express').Router();
 const path = require('path');
+const { createCard, getAllCards, deleteCard } = require(path.join(__dirname, '../controllers/cards'));
 
-// eslint-disable-next-line import/no-dynamic-require
-const cards = require(path.join(__dirname, '../data/cards.json'));
-
-routerCard.get('/', (req, res) => {
-  res.json(cards);
-});
+routerCard.get('/', getAllCards);
+routerCard.post('/', createCard);
+routerCard.delete('/:cardId', deleteCard);
 
 module.exports = {
   routerCard,
