@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const user = require('./user');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -11,9 +10,9 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
-    match: /^https?:\/\/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{2,5})?((\/[a-zA-Z0-9/]+)?)|(www\.)?\w+\.?\w*\.?\w*(\.[a-z]+|(:\d{2,5}))(\/?|\/[a-zA-Z0-9/]+))#?\/?/i
+    match: /^https?:\/\/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{2,5})?((\/[a-zA-Z0-9/]+)?)|(www\.)?\w+\.?\w*\.?\w*(\.[a-z]+|(:\d{2,5}))(\/?|\/[a-zA-Z0-9/]+))#?\/?/i,
   },
-  owner:{
+  owner: {
     required: true,
     minlength: 2,
     maxlength: 30,
@@ -21,12 +20,13 @@ const cardSchema = new mongoose.Schema({
     ref: 'user',
   },
   likes: {
-    default: []
+    type: Array,
+    default: [],
   },
   createdAt: {
     type: Date,
     default: Date.now(),
-  }
+  },
 });
 
 

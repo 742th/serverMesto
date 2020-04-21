@@ -1,6 +1,7 @@
 const routerUsers = require('express').Router();
 const path = require('path');
-const { createUser, getAllUsers, getUser } = require(path.join(__dirname,'../controllers/users'));
+
+const { createUser, getAllUsers, getUser } = require(path.join(__dirname, '../controllers/users'));
 
 routerUsers.get('/', getAllUsers);
 routerUsers.get('/:_id', getUser);
