@@ -20,10 +20,13 @@ module.exports.getAllCards = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .then((cards) => res.send(cards))
+  Card.findByIdAndRemove(req.params.cardId).orFail(new Error('Такой карточки нет'))
+    .then((cards) => {
+      if (cards) {
+        return res.send(cards);
+      } throw new Error('Такой карточки нет');
+    })
     .catch((err) => {
-      res.status(500).send({ message: 'Произошла ошибка' });
-      throw err.message;
+      res.status(404).send({ message: err.message });
     });
 };

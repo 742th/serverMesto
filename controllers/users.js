@@ -1,3 +1,5 @@
+const NotFoundError = require('../commons/NotFoundError');
+
 const User = require('../models/user');
 
 module.exports.createUser = (req, res) => {
@@ -21,7 +23,8 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  User.findById(req.params._id).orFail(new Error('Нет пользователя с таким id'))
+  User.findById(req.params._id)
+    .orFail(() => new NotFoundError('Нет пользователя с таким id'))
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(404).send(err.message));
+    .catch((err) => res.status(err.statusCode).send({ message: err.message }));
 };
