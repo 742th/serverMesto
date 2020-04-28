@@ -1,26 +1,12 @@
 const routerUsers = require('express').Router();
+const path = require('path');
 
-const users = require('../data/user.json');
+const { createUser, getAllUsers, getUser } = require(path.join(__dirname, '../controllers/users'));
 
-
-routerUsers.get('/', (req, res) => {
-  res.status(200).json(users);
-});
-
-const doesUserExist = (req, res, next) => {
-
-let answer = users.find((el) => el._id === req.params._id);
-  if (answer) {
-    res.json(answer);
-} res.status(404).json({ "message": "Нет пользователя с таким id" });
-
-  // next();
-};
-
-routerUsers.get('/:_id', doesUserExist);
+routerUsers.get('/', getAllUsers);
+routerUsers.get('/:_id', getUser);
+routerUsers.post('/', createUser);
 
 module.exports = {
   routerUsers,
-  doesUserExist,
-
 };

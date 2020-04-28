@@ -1,22 +1,30 @@
 {
   "name": "sprint_12",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/742th/serverMesto.git"
+  },
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app",
-    "dev": "nodemon app"
+    "dev": "nodemon app",
+    "fix": "eslint --debug . --fix"
   },
   "keywords": [],
-  "author": "",
+  "author": "Alexandr Stepanov",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.2",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "prettier": "2.0.4"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.9"
   }
 }
