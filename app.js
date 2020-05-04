@@ -8,6 +8,8 @@ const path = require('path');
 
 const { routerCard } = require(path.join(__dirname, './routes/cards.js'));
 const { routerUsers } = require(path.join(__dirname, './routes/users.js'));
+const auth = require(path.join(__dirname, './middlewares/auth'));
+const { login, createUser } = require(path.join(__dirname, './controllers/users'));
 
 // подключаемся к серверу монгус
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -19,14 +21,11 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5e9c802a9394332e54901a13',
-  };
 
-  next();
-});
-
+app.post('/signup', createUser);
+app.post('/signin', login);
+// аутентификация пользователя
+app.use(auth);
 // роутер для отдачи карточек
 app.use('/cards', routerCard);
 // роутер для отдачи юзеров и юзера

@@ -20,11 +20,15 @@ module.exports.getAllCards = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId).orFail(new Error('Такой карточки нет'))
-    .then((cards) => {
-      if (cards) {
-        return res.send(cards);
-      } throw new Error('Такой карточки нет');
+  Card.findById(req.params.cardId)
+    .then((card) => {
+      if (card.owner.toString() === req.user._id) {
+        return Card.findByIdAndRemove(req.params.cardId)
+          .then((el) => res.send(el))
+          .catch((err) => {
+            res.status(404).send({ message: err.message });
+          });
+      } throw new Error('Нет прав на удаление');
     })
     .catch((err) => {
       res.status(404).send({ message: err.message });
