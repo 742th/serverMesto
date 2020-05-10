@@ -17,7 +17,8 @@ module.exports.createUser = (req, res) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    // eslint-disable-next-line no-unused-vars
+    .then((user) => res.send({ name, about, email }))
     .catch((err) => {
       res.status(500).send({ message: 'Произошла ошибка' });
       throw err.message;
