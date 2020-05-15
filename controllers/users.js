@@ -4,7 +4,7 @@ const NotFoundError = require('../commons/NotFoundError');
 
 const User = require('../models/user');
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email,
   } = req.body;
@@ -18,34 +18,37 @@ module.exports.createUser = (req, res) => {
       password: hash,
     }))
     // eslint-disable-next-line no-unused-vars
-    .then((user) => res.send({ name, about, email }))
-    .catch((err) => {
-      res.status(500).send({ message: 'Произошла ошибка' });
-      throw err.message;
-    });
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Не удалось создать пользователя');
+      }
+      res.send({ name, about, email });
+    })
+    .catch(next);
 };
 
-module.exports.getAllUsers = (req, res) => {
+module.exports.getAllUsers = (req, res, next) => {
   User.find({})
+    .orFail(() => new NotFoundError('Нет пользователей'))
     .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      res.status(500).send({ message: 'Произошла ошибка' });
-      throw err.message;
-    });
+    .catch(next);
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   User.findById(req.params._id)
     .orFail(() => new NotFoundError('Нет пользователя с таким id'))
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(err.statusCode).send({ message: err.message }));
+    .catch(next);
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Нет пользователя с таким id');
+      }
       const token = jwt.sign(
         { _id: user._id },
         'some-secret-key',
@@ -53,9 +56,5 @@ module.exports.login = (req, res) => {
       );
       return res.send({ token });
     })
-    .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
-    });
+    .catch(next);
 };

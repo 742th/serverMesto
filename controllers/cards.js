@@ -1,25 +1,30 @@
 const Card = require('../models/card');
+const NotFoundError = require('../commons/NotFoundError');
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      res.status(500).send({ message: 'Произошла ошибка' });
-      throw err.message;
-    });
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError('Не удалось создать карточку');
+      }
+      res.send({ data: card });
+    })
+    .catch(next);
 };
 
-module.exports.getAllCards = (req, res) => {
+module.exports.getAllCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.send(cards))
-    .catch((err) => {
-      res.status(500).send({ message: 'Произошла ошибка' });
-      throw err.message;
-    });
+    .then((cards) => {
+      if (!cards) {
+        throw new NotFoundError('Нет данных о карточках');
+      }
+      res.send(cards);
+    })
+    .catch(next);
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
@@ -30,7 +35,5 @@ module.exports.deleteCard = (req, res) => {
           });
       } throw new Error('Нет прав на удаление');
     })
-    .catch((err) => {
-      res.status(404).send({ message: err.message });
-    });
+    .catch(next);
 };
