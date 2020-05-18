@@ -1,7 +1,8 @@
 **Mesto backend**<br>
 ## Учебный проект [Yandex.Praktikum](https://praktikum.yandex.ru/)
 ## Сделал: Степанов Александр web-dev
-
+## https://www.mesto-project.website/
+## 84.201.129.46
 Чеклист: 
 
 :white_check_mark: в проекте есть `package.json`;<br>
