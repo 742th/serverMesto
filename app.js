@@ -44,7 +44,8 @@ app.post('/signup', celebrate({
 }), createUser);
 app.post('/signin', celebrate({
   body: Joi.object().keys({
-    token: Joi.string().required().custom(validator.isJWT),
+    email: Joi.string().required().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'ru'] } }),
+    password: Joi.string().required().min(8),
   }),
 }), login);
 // аутентификация пользователя
