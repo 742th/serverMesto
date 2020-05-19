@@ -20,7 +20,6 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .orFail(new BadRequestError('Не удалось создать пользователя'))
     .then((user) => {
       if (!user) {
         throw new BadRequestError('Не удалось создать пользователя');
