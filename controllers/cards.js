@@ -1,14 +1,16 @@
 const Card = require('../models/card');
 const NotFoundError = require('../commons/NotFoundError');
+const ForbiddenError = require('../commons/ForbiddenError');
+const BadRequestError = require('../commons/BadRequestError');
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Не удалось создать карточку');
+        throw new BadRequestError('Не удалось создать карточку');
       }
-      res.send({ data: card });
+      return res.send({ data: card });
     })
     .catch(next);
 };
@@ -19,7 +21,7 @@ module.exports.getAllCards = (req, res, next) => {
       if (!cards) {
         throw new NotFoundError('Нет данных о карточках');
       }
-      res.send(cards);
+      return res.send(cards);
     })
     .catch(next);
 };
@@ -27,13 +29,19 @@ module.exports.getAllCards = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
+      if (!card) {
+        throw new NotFoundError('Такой карточки нет');
+      }
       if (card.owner.toString() === req.user._id) {
         return Card.findByIdAndRemove(req.params.cardId)
-          .then((el) => res.send(el))
-          .catch((err) => {
-            res.status(404).send({ message: err.message });
-          });
-      } throw new Error('Нет прав на удаление');
+          .then((el) => {
+            if (!el) {
+              throw new BadRequestError('Что-то пошло не так');
+            }
+            return res.send(el);
+          })
+          .catch(next);
+      } throw new ForbiddenError('Нет прав на удаление');
     })
     .catch(next);
 };

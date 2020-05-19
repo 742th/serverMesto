@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const NotFoundError = require('../commons/NotFoundError');
+const BadRequestError = require('../commons/BadRequestError');
+const UnauthorizedError = require('../commons/UnauthorizedError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 const User = require('../models/user');
@@ -18,10 +20,10 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    // eslint-disable-next-line no-unused-vars
+    .orFail(new BadRequestError('Не удалось создать пользователя'))
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Не удалось создать пользователя');
+        throw new BadRequestError('Не удалось создать пользователя');
       }
       res.send({ name, about, email });
     })
@@ -48,7 +50,7 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Нет пользователя с таким id');
+        throw new UnauthorizedError('Неправильные имя или пароль');
       }
       const token = jwt.sign(
         { _id: user._id },
