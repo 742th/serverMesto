@@ -13,8 +13,8 @@ routerCard.post('/', celebrate({
   }),
 }), createCard);
 routerCard.delete('/:_id', celebrate({
-  query: Joi.object().keys({
-    query: Joi.string().required(),
+  params: Joi.object().keys({
+    _id: Joi.string().alphanum().required(),
   }),
 }), deleteCard);
 

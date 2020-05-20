@@ -29,6 +29,12 @@ module.exports.createUser = (req, res, next) => {
       if (!user) {
         throw new BadRequestError('Не удалось создать пользователя');
       }
+      User.findOne({ _id: user._id });
+    })
+    .then((user) => {
+      if (!user) {
+        throw new BadRequestError('Не удалось создать пользователя');
+      }
       return res.send({ name, about, email });
     })
     .catch(next);
