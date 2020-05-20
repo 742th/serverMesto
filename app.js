@@ -37,14 +37,14 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
-    avatar: Joi.string().required().regex(/^https?:\/\/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{2,5})?((\/[a-zA-Z0-9/]+)?)|(www\.)?\w+\.?\w*\.?\w*(\.[a-z]+|(:\d{2,5}))(\/?|\/[a-zA-Z0-9/]+))#?\/?/i),
-    email: Joi.string().required().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'ru'] } }),
+    avatar: Joi.string().required().custom(validator.isURL),
+    email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
 }), createUser);
 app.post('/signin', celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'ru'] } }),
+    email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
 }), login);

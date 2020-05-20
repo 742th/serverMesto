@@ -27,13 +27,13 @@ module.exports.getAllCards = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findById(req.params.cardId)
+  Card.findById(req.params._id)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Такой карточки нет');
       }
       if (card.owner.toString() === req.user._id) {
-        return Card.findByIdAndRemove(req.params.cardId)
+        return Card.findByIdAndRemove(req.params._id)
           .then((el) => {
             if (!el) {
               throw new BadRequestError('Что-то пошло не так');

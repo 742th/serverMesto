@@ -13,18 +13,23 @@ module.exports.createUser = (req, res, next) => {
   } = req.body;
 
   bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
-    }))
+    .then((hash) => {
+      if (!hash) {
+        throw new BadRequestError('Не удалось создать пользователя');
+      }
+      return User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      });
+    })
     .then((user) => {
       if (!user) {
         throw new BadRequestError('Не удалось создать пользователя');
       }
-      res.send({ name, about, email });
+      return res.send({ name, about, email });
     })
     .catch(next);
 };
