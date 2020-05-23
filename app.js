@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
-const validator = require('validator');
+
 
 const app = express();
 require('dotenv').config();
@@ -15,6 +15,7 @@ const { routerUsers } = require(path.join(__dirname, './routes/users.js'));
 const auth = require(path.join(__dirname, './middlewares/auth'));
 const { login, createUser } = require(path.join(__dirname, './controllers/users'));
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+
 
 // подключаемся к серверу монгус
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -33,11 +34,12 @@ app.get('/crash-test', () => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
 });
+
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
-    avatar: Joi.string().required().custom(validator.isURL),
+    avatar: Joi.string().required().regex(/https?:\/\/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{2,5})?((\/[a-zA-Z0-9/]+)?)|(www\.)?\w+\.?\w*\.?\w*(\.[a-z]+|(:\d{2,5}))(\/?|\/[a-zA-Z0-9/]+))#?\/?/),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),

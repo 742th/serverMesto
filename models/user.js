@@ -19,13 +19,21 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true,
-    validate: validator.isURL,
+    validate: {
+      validator(v) {
+        return validator.isURL(v);
+      },
+    },
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    validate: validator.isEmail,
+    validate: {
+      validator(v) {
+        return validator.isEmail(v);
+      },
+    },
   },
   password: {
     type: String,
