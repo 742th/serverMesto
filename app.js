@@ -1,13 +1,21 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { celebrate, Joi, errors } = require('celebrate');
+
 
 const app = express();
+require('dotenv').config();
+
 const { PORT = 3000 } = process.env;
 const path = require('path');
 
 const { routerCard } = require(path.join(__dirname, './routes/cards.js'));
 const { routerUsers } = require(path.join(__dirname, './routes/users.js'));
+const auth = require(path.join(__dirname, './middlewares/auth'));
+const { login, createUser } = require(path.join(__dirname, './controllers/users'));
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
 
 // подключаемся к серверу монгус
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -19,19 +27,47 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5e9c802a9394332e54901a13',
-  };
 
-  next();
+app.use(requestLogger);
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
 });
 
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
+    avatar: Joi.string().required().regex(/https?:\/\/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{2,5})?((\/[a-zA-Z0-9/]+)?)|(www\.)?\w+\.?\w*\.?\w*(\.[a-z]+|(:\d{2,5}))(\/?|\/[a-zA-Z0-9/]+))#?\/?/),
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), createUser);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), login);
+// аутентификация пользователя
+app.use(auth);
 // роутер для отдачи карточек
 app.use('/cards', routerCard);
 // роутер для отдачи юзеров и юзера
 app.use('/users', routerUsers);
+// для запросов на не сущестующий адрес
 app.use((req, res) => res.status(404).send({ message: 'Запрашиваемый ресурс не найден' }));
+app.use(errorLogger);
+// обрабатывает ошибки из celebrate
+app.use(errors());
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res
+    .status(statusCode)
+    .send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
+});
 
 // запустили нод сервак на 3000 порту
 app.listen(PORT, () => {
